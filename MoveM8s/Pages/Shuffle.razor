@@ -12,11 +12,7 @@
     <button class="btn btn-primary btn-green" @onclick="ShuffleActivities">Click me</button>
     @if (_suggestedActivity != null)
     {
-        <div>
-            <h4>@_suggestedActivity.Properties.Name</h4>
-            <p>@_suggestedActivity.Properties.Description</p>
-            <p>Plats: @_suggestedActivity.Properties.VisitUrl</p>
-        </div>
+        <ActivityTemplate SuggestedActivity=_suggestedActivity />
     }
 </div>
 
