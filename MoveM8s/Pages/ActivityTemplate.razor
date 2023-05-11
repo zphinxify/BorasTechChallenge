@@ -1,14 +1,46 @@
 ﻿@using MoveM8s.Data.Models;
+
+@inject IJSRuntime JSRuntime
+
 @if (SuggestedActivity != null)
 {
     <div class="activity-container">
-        <h4>@SuggestedActivity.Name</h4>
-        <p>@SuggestedActivity.Description</p>
-        <p>Plats: @SuggestedActivity.VisitUrl</p>
+        <h4>@SuggestedActivity.Properties.Name</h4>
+        <p>@SuggestedActivity.Properties.Description</p>
+        <p>Tillgänglighetsanpassad: @SuggestedActivity.Properties.Accessibility</p>
     </div>
+
+    <Component Lat=SuggestedActivity.Geometry.Coordinates[0] Lng=SuggestedActivity.Geometry.Coordinates[1] />
 }
 
 @code {
     [Parameter]
     public Activity? SuggestedActivity { get; set; }
+
+    //protected override async Task OnAfterRenderAsync(bool firstRender)
+    //{
+    //    if (firstRender)
+    //    {
+    //        await JSRuntime.InvokeVoidAsync("initializeMap");
+    //    }
+    //}
+
+    //[JSInvokable]
+    //public void InitializeMap()
+    //{
+    //    JSRuntime.InvokeVoidAsync("createMap", GetCoords(SuggestedActivity.Geometry.Coordinates));
+    //}
+
+    //private Coordinate GetCoords(List<double> coordList)
+    //{
+    //    var lat = coordList.FirstOrDefault();
+    //    var lon = coordList[1];
+    //    var coords = new Coordinate()
+    //        {
+    //            lat = lat,
+    //            lon = lon
+    //        };
+
+    //    return coords;
+    //}
 }

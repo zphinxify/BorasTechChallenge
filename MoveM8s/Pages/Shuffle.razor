@@ -13,12 +13,24 @@
     {
         <ActivityTemplate SuggestedActivity=_suggestedActivity />
     }
+
+</div>
+<div class="checkboxes">
+    <label>
+        <input type="checkbox" @bind="needsAccessability" /> Tillgänglighetsanpassat
+    </label>
+    <label>
+        <input type="checkbox" @bind="isChildFriendly" /> Barnanpassat
+    </label>
 </div>
 
 @code {
     private string suggestion = "Click shuffle for suggestion";
     private Activity _suggestedActivity = null;
     private IEnumerable<Activity> _activities = new List<Activity>();
+    private bool needsAccessability;
+    private bool isChildFriendly;
+
 
     protected override async Task OnInitializedAsync()
     {
