@@ -1,17 +1,14 @@
-﻿using Microsoft.AspNetCore.Http.Features;
 using MoveM8s.Data.Models;
 using System.Text.Json;
 
 namespace MoveM8s.Data.Services;
 
-public class PlaygroundService
+public class GenericActivityService
 {
-    private static string _playgroundUrl = "https://catalog.boras.se/store/1/resource/74";
-
-    public async Task<ActivityCollection> GetPlaygroundActivitiesAsync()
+    public async Task<ActivityCollection> GetGenericActivities(string typeOfActivity, string url)
     {
         using var client = new HttpClient();
-        var response = await client.GetAsync(_playgroundUrl);
+        var response = await client.GetAsync(url);
         if (response.IsSuccessStatusCode)
         {
             var content = await response.Content.ReadAsStringAsync();
@@ -24,7 +21,7 @@ public class PlaygroundService
         }
         else
         {
-            Console.WriteLine($"Error: {response.StatusCode}");
+            Console.WriteLine($"Error when fetching {typeOfActivity}data: {response.StatusCode}");
             return new ActivityCollection();
         }
     }

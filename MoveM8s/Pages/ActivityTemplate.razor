@@ -5,9 +5,13 @@
 @if (SuggestedActivity != null)
 {
     <div class="activity-container">
-        <h4>@SuggestedActivity.Properties.Name</h4>
+        <h4>@GetName()</h4>
         <p>@SuggestedActivity.Properties.Description</p>
-        <p>Tillgänglighetsanpassad: @SuggestedActivity.Properties.Accessibility</p>
+        @if (!string.IsNullOrEmpty(SuggestedActivity.Properties.VisitUrl))
+        {
+            <p>Plats: @SuggestedActivity.Properties.VisitUrl</p>
+        }
+        <span>Lämplig för rullstol eller barnvagn <i class="oi @iconClass"></i></span>
     </div>
 
     <Component Lat=SuggestedActivity.Geometry.Coordinates[0] Lng=SuggestedActivity.Geometry.Coordinates[1] />
@@ -17,30 +21,25 @@
     [Parameter]
     public Activity? SuggestedActivity { get; set; }
 
-    //protected override async Task OnAfterRenderAsync(bool firstRender)
-    //{
-    //    if (firstRender)
-    //    {
-    //        await JSRuntime.InvokeVoidAsync("initializeMap");
-    //    }
-    //}
+    private string iconClass
+    {
+        get
+        {
+            if (SuggestedActivity == null || SuggestedActivity.Properties.Accessibility == null)
+            {
+                return "";
+            }
 
-    //[JSInvokable]
-    //public void InitializeMap()
-    //{
-    //    JSRuntime.InvokeVoidAsync("createMap", GetCoords(SuggestedActivity.Geometry.Coordinates));
-    //}
+            return (bool)SuggestedActivity?.Properties.Accessibility || SuggestedActivity.Properties.Name == null
+                ? "oi-check alert-success"
+                : "oi-x alert-danger";
+        }
+    }
 
-    //private Coordinate GetCoords(List<double> coordList)
-    //{
-    //    var lat = coordList.FirstOrDefault();
-    //    var lon = coordList[1];
-    //    var coords = new Coordinate()
-    //        {
-    //            lat = lat,
-    //            lon = lon
-    //        };
-
-    //    return coords;
-    //}
+    private string GetName()
+    {
+        return string.IsNullOrEmpty(SuggestedActivity.Properties.Name)
+            ? SuggestedActivity.Properties.Namn
+            : SuggestedActivity.Properties.Name;
+    }
 }
