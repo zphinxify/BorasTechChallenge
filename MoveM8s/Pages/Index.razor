@@ -14,9 +14,9 @@
 @if (_suggestedActivity != null)
 {
     <div>
-        <h4>@_suggestedActivity.Title</h4>
-        <p>@_suggestedActivity.Description</p>
-        <p>Plats: @_suggestedActivity.Location</p>
+        <h4>@_suggestedActivity.Properties.Description</h4>
+        <p>@_suggestedActivity.Properties.Name</p>
+        <p>Plats: @_suggestedActivity.Properties.VisitUrl</p>
     </div>
 }
 
@@ -27,7 +27,7 @@
 @code {
     private bool shuffled = false;
     private Activity? _suggestedActivity = null;
-    private IEnumerable<Activity> _activities;
+    private ActivityCollection _activities;
 
     protected override async Task OnInitializedAsync()
     {
@@ -45,8 +45,8 @@
     private void ShuffleActivities()
     {
         Random R = new Random();
-        int someRandomNumber = R.Next(0, _activities.Count() - 1);
+        int someRandomNumber = R.Next(0, _activities.Activites.Count() - 1);
 
-        _suggestedActivity = _activities.ElementAt(someRandomNumber);
+        _suggestedActivity = _activities.Activites.ElementAt(someRandomNumber);
     }
 }
