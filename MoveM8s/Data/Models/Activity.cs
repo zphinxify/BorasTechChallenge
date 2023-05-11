@@ -2,7 +2,6 @@
 
 public class Activity
 {
-    public string Name { get; set; }
-    public string Description { get; set; }
-    public string VisitUrl { get; set; }
+    public Properties Properties { get; set; }
+    public Geometry Geometry { get; set; }
 }
