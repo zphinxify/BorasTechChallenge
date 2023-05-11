@@ -1,0 +1,14 @@
+﻿@using MoveM8s.Data.Models;
+@if (SuggestedActivity != null)
+{
+    <div class="activity-container">
+        <h4>@SuggestedActivity.Name</h4>
+        <p>@SuggestedActivity.Description</p>
+        <p>Plats: @SuggestedActivity.VisitUrl</p>
+    </div>
+}
+
+@code {
+    [Parameter]
+    public ActivityFeature? SuggestedActivity { get; set; }
+}
