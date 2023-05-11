@@ -1,6 +1,4 @@
-﻿using System.Text.Json.Serialization;
-
-namespace MoveM8s.Data.Models;
+﻿namespace MoveM8s.Data.Models;
 
 public class Activity
 {

@@ -1,9 +1,52 @@
 ﻿@page "/"
+@using MoveM8s.Data.Models;
+@using MoveM8s.Data.Services;
 
-<PageTitle>Index</PageTitle>
+@inject ActivityService ActivityService
+@inject NavigationManager NavManager
 
-<h1>Hello, world!</h1>
+<PageTitle>Välkommen</PageTitle>
 
-Welcome to your new app.
+<h1>Kul att du hittat hit!</h1>
 
-<SurveyPrompt Title="How is Blazor working for you?" />
+<p>Det här är det perfekta verktyget för dig som <em>vill</em> göra nåt, men kanske behöver hjälp med inspirationen. Och precis som en tv-kock har vi förberett lite här och kommer med ett förslag direkt!</p>
+
+@if (_suggestedActivity != null)
+{
+    <div>
+        <h4>@_suggestedActivity.Title</h4>
+        <p>@_suggestedActivity.Description</p>
+        <p>Plats: @_suggestedActivity.Location</p>
+    </div>
+}
+
+<h3>Inte det du letade efter?</h3>
+<p>Ingen fara på taket, vi har fler förslag i rockärmen!</p>
+<button class="btn-primary btn-green" type="button" @onclick="@(() => NavManager.NavigateTo("/shuffle"))">Fler förslag</button>
+
+@code {
+    private bool shuffled = false;
+    private Activity? _suggestedActivity = null;
+    private IEnumerable<Activity> _activities;
+
+    protected override async Task OnInitializedAsync()
+    {
+        _activities = await ActivityService.GetActivities();
+    }
+
+    protected override async Task OnParametersSetAsync()
+    {
+        if (!shuffled)
+        {
+            ShuffleActivities();
+        }
+    }
+
+    private void ShuffleActivities()
+    {
+        Random R = new Random();
+        int someRandomNumber = R.Next(0, _activities.Count() - 1);
+
+        _suggestedActivity = _activities.ElementAt(someRandomNumber);
+    }
+}
