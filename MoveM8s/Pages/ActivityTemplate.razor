@@ -2,13 +2,39 @@
 @if (SuggestedActivity != null)
 {
     <div class="activity-container">
-        <h4>@SuggestedActivity.Name</h4>
-        <p>@SuggestedActivity.Description</p>
-        <p>Plats: @SuggestedActivity.VisitUrl</p>
+        <h4>@GetName()</h4>
+        <p>@SuggestedActivity.Properties.Description</p>
+        @if (!string.IsNullOrEmpty(SuggestedActivity.Properties.VisitUrl))
+        {
+            <p>Plats: @SuggestedActivity.Properties.VisitUrl</p>
+        }
+        <span>Lämplig för rullstol eller barnvagn <i class="oi @iconClass"></i></span>
     </div>
 }
 
 @code {
     [Parameter]
     public Activity? SuggestedActivity { get; set; }
+
+    private string iconClass
+    {
+        get
+        {
+            if (SuggestedActivity == null || SuggestedActivity.Properties.Accessibility == null)
+            {
+                return "";
+            }
+
+            return (bool)SuggestedActivity?.Properties.Accessibility || SuggestedActivity.Properties.Name == null
+                ? "oi-check alert-success"
+                : "oi-x alert-danger";
+        }
+    }
+
+    private string GetName()
+    {
+        return string.IsNullOrEmpty(SuggestedActivity.Properties.Name)
+            ? SuggestedActivity.Properties.Namn
+            : SuggestedActivity.Properties.Name;
+    }
 }

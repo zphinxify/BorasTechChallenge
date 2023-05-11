@@ -8,7 +8,21 @@
 
 <div>
     <div>Tryck på knappen för att få fler eminenta förslag</div>
-    <button class="btn btn-primary btn-green" @onclick="ShuffleActivities">Click me</button>
+    <button class="btn btn-primary btn-green" @onclick="ShuffleActivities">Ge förslag</button>
+    <div class="chip-container">
+        @foreach (var theme in _selectedThemes)
+        {
+            <FilterChip Theme="@theme" OnClickCallback="Remove" />
+        }
+    </div>
+
+    <ul>
+        @foreach (var option in _availableThemes)
+        {
+            <li @onclick="() => AddTheme(option)">@option</li>
+        }
+    </ul>
+
     @if (_suggestedActivity != null)
     {
         <ActivityTemplate SuggestedActivity=_suggestedActivity />
@@ -19,10 +33,13 @@
     private string suggestion = "Click shuffle for suggestion";
     private Activity _suggestedActivity = null;
     private IEnumerable<Activity> _activities = new List<Activity>();
+    public IEnumerable<string> _selectedThemes = new List<string>();
+    public IEnumerable<string> _availableThemes = new List<string>();
 
     protected override async Task OnInitializedAsync()
     {
-        _activities = await ActivityService.GetActivitiesAsync();
+        _activities = await ActivityService.GetAllActivitiesAsync();
+        DoStuff();
     }
 
     private void ShuffleActivities()
@@ -32,5 +49,26 @@
 
         _suggestedActivity = _activities.ElementAt(someRandomNumber);
 
+    }
+
+    private void DoStuff()
+    {
+        _availableThemes = _activities.Where(x => x.Properties.Theme != null).Select(x => x.Properties.Theme).Distinct();
+    }
+
+    private void Remove(string theme)
+    {
+        if (_selectedThemes.Contains(theme))
+        {
+            _selectedThemes = _selectedThemes.Where(x => x != theme);
+        }
+    }
+
+    private void AddTheme(string theme)
+    {
+        if (!_selectedThemes.Contains(theme))
+        {
+            _selectedThemes = _selectedThemes.Concat(new string[] { theme });
+        }
     }
 }

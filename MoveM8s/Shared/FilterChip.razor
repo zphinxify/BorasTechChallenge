@@ -1,0 +1,14 @@
+﻿<span class="chip" @onclick=RemoveChip>@Theme <i class="oi oi-x"></i></span>
+
+@code {
+    [Parameter]
+    public string Theme { get; set; }
+
+    [Parameter]
+    public EventCallback<string> OnClickCallback { get; set; }
+
+    private async Task RemoveChip()
+    {
+        await OnClickCallback.InvokeAsync(Theme);
+    }
+}
