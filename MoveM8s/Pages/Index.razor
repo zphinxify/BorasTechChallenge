@@ -24,7 +24,7 @@
 
     protected override async Task OnInitializedAsync()
     {
-        _activities = await ActivityService.GetActivities();
+        _activities = await ActivityService.GetActivitiesAsync();
     }
 
     protected override async Task OnParametersSetAsync()

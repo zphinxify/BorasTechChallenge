@@ -13,6 +13,7 @@ builder.Services.AddScoped<ISMHIClient,SMHIClient>();
 builder.Services.AddScoped<ActivityService>();
 builder.Services.AddScoped<PlaygroundService>();
 builder.Services.AddScoped<DogService>();
+builder.Services.AddScoped<ParkService>();
 
 var app = builder.Build();
 

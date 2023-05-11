@@ -4,77 +4,24 @@ namespace MoveM8s.Data.Services;
 
 public class ActivityService
 {
-    public async Task<ActivityCollection> GetActivities()
+    private readonly PlaygroundService _playgroundService;
+    private readonly ParkService _parkService;
+
+    public ActivityService(PlaygroundService playgroundService, ParkService parkService)
     {
-        //return new List<Activity>
-        //{
-        //    new Activity { Title = "Simma", Description = "Ta på dig badkläderna och ta några simtag i fin natur", Location = "Almenäs" },
-        //    new Activity { Title = "Hundlek", Description = "Ta med dig din fyrbenta bästis och njut av det fina vädret ihop", Location = "Kransmossen" },
-        //    new Activity { Title = "Promenera", Description = "Njut av vackra omgivningar längs med viskan på grusade gångar där du även kan ta med dig barnvagnen", Location = "Stadsparken" }
-        //};
+        _playgroundService = playgroundService;
+        _parkService = parkService;
+    }
 
+    public async Task<IEnumerable<Activity>> GetActivitiesAsync()
+    {
+        var list = new List<Activity>();
 
-        return new ActivityCollection
-        {
-            Activites = new List<Activity>
-            {
-                new Activity
-                {
-                    Geometry = new Geometry
-                    {
-                        Coordinates = new List<double>
-                        {
-                            20.12390349578,
-                            51.32498673487
-                        },
-                        Type = "type :)"
+        var parkActivities = await _parkService.GetParkActivitiesAsync();
+        var playgroundActivities = await _playgroundService.GetPlaygroundActivitiesAsync();
+        list.AddRange(parkActivities.Activites);
+        list.AddRange(playgroundActivities.Activites);
 
-                    },
-                    Properties = new Properties
-                    {
-                        Description = "Ta på dig badkläderna och ta några simtag i fin natur",
-                        Name = "Almenäs",
-                        VisitUrl = "boras.se",
-                        
-                    }
-                },
-                new Activity
-                {
-                    Geometry = new Geometry
-                    {
-                        Coordinates = new List<double>
-                        {
-                            20.12390349578,
-                            51.32498673487
-                        }
-                    },
-                    Properties = new Properties
-                    {
-                        Description = "Ta med dig din fyrbenta bästis och njut av det fina vädret ihop",
-                        Name = "Ryaåsar",
-                        VisitUrl = "boras.se",
-
-                    }
-                },
-                new Activity
-                {
-                    Geometry = new Geometry
-                    {
-                        Coordinates = new List<double>
-                        {
-                            20.12390349578,
-                            51.32498673487
-                        }
-                    },
-                    Properties = new Properties
-                    {
-                        Description = "Njut av vackra omgivningar längs med viskan på grusade gångar där du även kan ta med dig barnvagnen",
-                        Name = "OuterSpace",
-                        VisitUrl = "boras.se",
-
-                    }
-                }
-            }
-        };
+        return list;
     }
 }
