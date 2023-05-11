@@ -11,9 +11,7 @@ builder.Services.AddServerSideBlazor();
 builder.Services.AddScoped<WeatherForecastService>();
 builder.Services.AddScoped<ISMHIClient,SMHIClient>();
 builder.Services.AddScoped<ActivityService>();
-builder.Services.AddScoped<PlaygroundService>();
-builder.Services.AddScoped<DogService>();
-builder.Services.AddScoped<ParkService>();
+builder.Services.AddScoped<GenericActivityService>();
 
 var app = builder.Build();
 
