@@ -3,7 +3,7 @@
     public class TimeSeries
     {
         public DateTime ValidTime { get; set; }
-        public WeatherParameter[] Parameters { get; set; }
+        public IEnumerable<WeatherParameter> Parameters { get; set; }
 
     }
 }

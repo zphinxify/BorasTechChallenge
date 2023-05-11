@@ -1,6 +1,4 @@
 using MoveM8s.Data;
-using MoveM8s.Client;
-using MoveM8s.Interfaces;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -8,7 +6,6 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddRazorPages();
 builder.Services.AddServerSideBlazor();
 builder.Services.AddScoped<WeatherForecastService>();
-builder.Services.AddScoped<ISMHIClient,SMHIClient>();
 
 var app = builder.Build();
 
