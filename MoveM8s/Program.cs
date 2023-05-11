@@ -1,6 +1,6 @@
-using Microsoft.AspNetCore.Components;
-using Microsoft.AspNetCore.Components.Web;
 using MoveM8s.Data;
+using MoveM8s.Client;
+using MoveM8s.Interfaces;
 using MoveM8s.Data.Services;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -8,7 +8,8 @@ var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 builder.Services.AddRazorPages();
 builder.Services.AddServerSideBlazor();
-builder.Services.AddSingleton<WeatherForecastService>();
+builder.Services.AddScoped<WeatherForecastService>();
+builder.Services.AddScoped<ISMHIClient,SMHIClient>();
 builder.Services.AddScoped<ActivityService>();
 
 var app = builder.Build();
