@@ -27,11 +27,11 @@
 @code {
     private bool shuffled = false;
     private Activity? _suggestedActivity = null;
-    private ActivityCollection _activities;
+    private IEnumerable<Activity> _activities;
 
     protected override async Task OnInitializedAsync()
     {
-        _activities = await ActivityService.GetActivities();
+        _activities = await ActivityService.GetActivitiesAsync();
     }
 
     protected override async Task OnParametersSetAsync()
@@ -45,8 +45,8 @@
     private void ShuffleActivities()
     {
         Random R = new Random();
-        int someRandomNumber = R.Next(0, _activities.Activites.Count() - 1);
+        int someRandomNumber = R.Next(0, _activities.Count() - 1);
 
-        _suggestedActivity = _activities.Activites.ElementAt(someRandomNumber);
+        _suggestedActivity = _activities.ElementAt(someRandomNumber);
     }
 }
