@@ -7,10 +7,7 @@ namespace MoveM8s.Data.Services;
 public class PlaygroundService
 {
     private static string _playgroundUrl = "https://catalog.boras.se/store/1/resource/74";
-    public PlaygroundService()
-    {
 
-    }
     public async Task<ActivityCollection> GetPlaygroundActivitiesAsync()
     {
         using var client = new HttpClient();

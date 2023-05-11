@@ -3,7 +3,6 @@
 @using MoveM8s.Data.Services;
 
 @inject ActivityService ActivityService
-@inject PlaygroundService PlaygroundService
 
 <h3>Shuffle</h3>
 
@@ -19,14 +18,11 @@
 @code {
     private string suggestion = "Click shuffle for suggestion";
     private Activity _suggestedActivity = null;
-    private List<Activity> _activities = new List<Activity>();
+    private IEnumerable<Activity> _activities = new List<Activity>();
 
     protected override async Task OnInitializedAsync()
     {
-        var activities = await ActivityService.GetActivities();
-        var playgroundActivities = await PlaygroundService.GetPlaygroundActivitiesAsync();
-
-        _activities = AddActivities(activities, playgroundActivities);
+        _activities = await ActivityService.GetActivitiesAsync();
     }
 
     private void ShuffleActivities()
@@ -35,20 +31,6 @@
         int someRandomNumber = R.Next(0, _activities.Count() - 1);
 
         _suggestedActivity = _activities.ElementAt(someRandomNumber);
-    }
 
-    private List<Activity> AddActivities(ActivityCollection activityList1, ActivityCollection activityList2)
-    {
-        foreach (var activity in activityList1.Activites)
-        {
-            _activities.Add(activity);
-        }
-
-        foreach (var activity in activityList2.Activites)
-        {
-            _activities.Add(activity);
-        }
-
-        return _activities;
     }
 }
