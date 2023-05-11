@@ -7,20 +7,19 @@
 <h3>Shuffle</h3>
 
 <div>
-    <div>@suggestion</div>
-    <button class="btn btn-primary" @onclick="ShuffleActivities">Click me</button>
+    <div>Tryck på knappen för att få fler eminenta förslag</div>
+    <button class="btn btn-primary btn-green" @onclick="ShuffleActivities">Click me</button>
     @if (_suggestedActivity != null)
     {
         <div>
-            <h4>@_suggestedActivity.Title</h4>
+            <h4>@_suggestedActivity.Name</h4>
             <p>@_suggestedActivity.Description</p>
-            <p>Plats: @_suggestedActivity.Location</p>
+            <p>Plats: @_suggestedActivity.VisitUrl</p>
         </div>
     }
 </div>
 
 @code {
-    private string suggestion = "Click shuffle for suggestion";
     private Activity? _suggestedActivity = null;
     private IEnumerable<Activity> _activities;
 
