@@ -6,3 +6,7 @@
     margin-bottom: 25px;
     margin-top: 25px;
 }
+
+.alert-success, .alert-danger {
+    background-color: unset;
+}

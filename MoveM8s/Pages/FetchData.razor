@@ -1,5 +1,6 @@
 ﻿@page "/fetchdata"
 @using MoveM8s.Data
+@using MoveM8s.Data.Dtos;
 @inject WeatherForecastService ForecastService
 
 <PageTitle>Weather forecast</PageTitle>
@@ -8,7 +9,7 @@
 
 <p>This component demonstrates fetching data from a service.</p>
 
-@if (forecast == null)
+@if (forecasts == null)
 {
     <p><em>Loading...</em></p>
 }
@@ -18,26 +19,21 @@ else
         <thead>
             <tr>
                 <th>Date</th>
-                <tr>
-                    <th> Name   </th>
-                </tr>
-                @*<th>Value</th>*@
+                <th>Weather</th>
+                <th>Precipitation</th>
+                <th>Temp.</th>
+                <th>Wind</th>
             </tr>
         </thead>
         <tbody>
-            @foreach(var timeSerie in forecast.TimeSeries)
+            @foreach(var forecast in forecasts)
             {
                 <tr>
-                   <td>@timeSerie.ValidTime.ToShortDateString()</td>
-                @foreach (var parameter in timeSerie.Parameters)
-                {
-                    <tr>
-
-                   <td>@parameter.Name</td>
-                   @*<td>@parameter.Values.FirstOrDefault() </td> *@
-
-                   </tr>                  
-                }
+                   <td>@forecast.Time</td>
+                    <td>@forecast.Weather</td>
+                    <td>@forecast.PrecipitationCategory</td>
+                    <td>@forecast.TemperatureC</td>
+                   <td>@forecast.WindSpeed </td> 
                 </tr>
             }
         </tbody>
@@ -45,10 +41,12 @@ else
 }
 
 @code {
-    private WeatherForecast? forecast;
+    private List<WeatherForecastResponseDto>? forecasts;
+    private string lon = "12.939743";
+    private string lat = "57.725234";
 
     protected override async Task OnInitializedAsync()
     {
-        forecast = await ForecastService.GetForecastAsync(DateOnly.FromDateTime(DateTime.Now));
+        forecasts = await ForecastService.GetForecastAsync(lon,lat);
     }
 }

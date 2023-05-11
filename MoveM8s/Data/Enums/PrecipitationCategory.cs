@@ -1,6 +1,6 @@
 ﻿namespace MoveM8s.Data.Enums;
 
-public enum PrecipitationCategory : ushort
+public enum PrecipitationCategory
 {
     NoPrecipitation = 0,
     Snow = 1,

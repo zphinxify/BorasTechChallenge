@@ -11,7 +11,7 @@ public class ActivityService
         _genericActivityService = genericActivityService;
     }
 
-    public async Task<IEnumerable<Activity>> GetActivitiesAsync()
+    public async Task<IEnumerable<Activity>> GetAllActivitiesAsync()
     {
         var list = new List<Activity>();
 

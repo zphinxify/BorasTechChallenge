@@ -77,3 +77,7 @@ a, .btn-link {
     .blazor-error-boundary::after {
         content: "An error has occurred."
     }
+
+.chip-container {
+    margin: 10px 0;
+}

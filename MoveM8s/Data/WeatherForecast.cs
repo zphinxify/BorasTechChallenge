@@ -2,5 +2,5 @@ namespace MoveM8s.Data;
 
 public class WeatherForecast
 {
-   public TimeSeries[] TimeSeries { get; set; }
+   public IEnumerable<TimeSeries> TimeSeries { get; set; }
 }
