@@ -5,6 +5,6 @@ namespace MoveM8s.Data.Models
     public class ActivityCollection
     {
         [JsonPropertyName("features")]
-        public List<Activity> Activites { get; set; }
+        public List<Activity> Activities { get; set; }
     }
 }
