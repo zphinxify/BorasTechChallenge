@@ -11,14 +11,7 @@
 
 <p>Det här är det perfekta verktyget för dig som <em>vill</em> göra nåt, men kanske behöver hjälp med inspirationen. Och precis som en tv-kock har vi förberett lite här och kommer med ett förslag direkt!</p>
 
-@if (_suggestedActivity != null)
-{
-    <div>
-        <h4>@_suggestedActivity.Properties.Description</h4>
-        <p>@_suggestedActivity.Properties.Name</p>
-        <p>Plats: @_suggestedActivity.Properties.VisitUrl</p>
-    </div>
-}
+<ActivityTemplate SuggestedActivity="_suggestedActivity" />
 
 <h3>Inte det du letade efter?</h3>
 <p>Ingen fara på taket, vi har fler förslag i rockärmen!</p>
