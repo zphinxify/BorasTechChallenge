@@ -5,6 +5,7 @@
         public long? Source { get; set; }
         public string? Id { get; set; }
         public string Name { get; set; }
+        public string Namn { get; set; }
         public string? Email { get; set; }
         public long? AltSource { get; set; }
         public string? VisitUrl { get; set; }
