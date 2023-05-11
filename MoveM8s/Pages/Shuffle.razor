@@ -1,0 +1,39 @@
+﻿@page "/shuffle"
+@using MoveM8s.Data.Models;
+@using MoveM8s.Data.Services;
+
+@inject ActivityService ActivityService
+
+<h3>Shuffle</h3>
+
+<div>
+    <div>@suggestion</div>
+    <button class="btn btn-primary" @onclick="ShuffleActivities">Click me</button>
+    @if (_suggestedActivity != null)
+    {
+        <div>
+            <h4>@_suggestedActivity.Title</h4>
+            <p>@_suggestedActivity.Description</p>
+            <p>Plats: @_suggestedActivity.Location</p>
+        </div>
+    }
+</div>
+
+@code {
+    private string suggestion = "Click shuffle for suggestion";
+    private Activity _suggestedActivity = null;
+    private IEnumerable<Activity> _activities;
+
+    protected override async Task OnInitializedAsync()
+    {
+        _activities = await ActivityService.GetActivities();
+    }
+
+    private void ShuffleActivities()
+    {
+        Random R = new Random();
+        int someRandomNumber = R.Next(0, _activities.Count() - 1);
+
+        _suggestedActivity = _activities.ElementAt(someRandomNumber);
+    }
+}

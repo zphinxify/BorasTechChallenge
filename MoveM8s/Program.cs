@@ -1,4 +1,5 @@
 using MoveM8s.Data;
+using MoveM8s.Data.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -6,6 +7,7 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddRazorPages();
 builder.Services.AddServerSideBlazor();
 builder.Services.AddScoped<WeatherForecastService>();
+builder.Services.AddScoped<ActivityService>();
 
 var app = builder.Build();
 
