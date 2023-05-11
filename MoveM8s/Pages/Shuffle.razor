@@ -3,6 +3,7 @@
 @using MoveM8s.Data.Services;
 
 @inject ActivityService ActivityService
+@inject PlaygroundService PlaygroundService
 
 <h3>Shuffle</h3>
 
@@ -12,9 +13,9 @@
     @if (_suggestedActivity != null)
     {
         <div>
-            <h4>@_suggestedActivity.Title</h4>
-            <p>@_suggestedActivity.Description</p>
-            <p>Plats: @_suggestedActivity.Location</p>
+            <h4>@_suggestedActivity.Properties.Name</h4>
+            <p>@_suggestedActivity.Properties.Description</p>
+            <p>Plats: @_suggestedActivity.Properties.VisitUrl</p>
         </div>
     }
 </div>
@@ -22,11 +23,14 @@
 @code {
     private string suggestion = "Click shuffle for suggestion";
     private Activity _suggestedActivity = null;
-    private IEnumerable<Activity> _activities;
+    private List<Activity> _activities = new List<Activity>();
 
     protected override async Task OnInitializedAsync()
     {
-        _activities = await ActivityService.GetActivities();
+        var activities = await ActivityService.GetActivities();
+        var playgroundActivities = await PlaygroundService.GetPlaygroundActivitiesAsync();
+
+        _activities = AddActivities(activities, playgroundActivities);
     }
 
     private void ShuffleActivities()
@@ -35,5 +39,20 @@
         int someRandomNumber = R.Next(0, _activities.Count() - 1);
 
         _suggestedActivity = _activities.ElementAt(someRandomNumber);
+    }
+
+    private List<Activity> AddActivities(ActivityCollection activityList1, ActivityCollection activityList2)
+    {
+        foreach (var activity in activityList1.Activites)
+        {
+            _activities.Add(activity);
+        }
+
+        foreach (var activity in activityList2.Activites)
+        {
+            _activities.Add(activity);
+        }
+
+        return _activities;
     }
 }
