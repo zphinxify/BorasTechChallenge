@@ -1,14 +1,16 @@
 ﻿@page "/shuffle"
 @using MoveM8s.Data.Models;
 @using MoveM8s.Data.Services;
+@using System.Timers;
 
 @inject ActivityService ActivityService
 
 <h3>Shuffle</h3>
 
 <div>
-    <div>Tryck på knappen för att få fler eminenta förslag</div>
-    <button class="btn btn-primary btn-green" @onclick="ShuffleActivities">Ge förslag</button>
+    <div>Slå tärningen för att få fler eminenta förslag</div>
+    <img src="/img/dice-1294902_1280.png" @onclick="ShuffleActivities" height="200px" class="@bounce" />
+    @*<button class="btn btn-primary btn-green" @onclick="ShuffleActivities">Ge förslag</button>*@
     <div class="chip-container">
         @foreach (var theme in _selectedThemes)
         {
@@ -16,10 +18,15 @@
         }
     </div>
 
-    <ul>
-        @foreach (var option in _availableThemes)
+    <button class="btn btn-primary btn-light-green" @onclick=@(() => showList = !showList)>Filtrera</button>
+    <ul class="filter-list list-unstyled @(showList ? "" : "visually-hidden")">
+        @foreach (var group in _availableThemes)
         {
-            <li @onclick="() => AddTheme(option)">@option</li>
+            <li class="text-danger" @onclick:preventDefault>@group.Key</li>
+            @foreach (var option in group.Value.Where(x => !_selectedThemes.Contains(x)))
+            {
+                <li @onclick="() => AddTheme(option)">@option</li>
+            }
         }
     </ul>
 
@@ -30,30 +37,62 @@
 </div>
 
 @code {
-    private string suggestion = "Click shuffle for suggestion";
+    private static Timer timer;
+    private string bounce = "";
+    private bool showList = false;
     private Activity _suggestedActivity = null;
     private IEnumerable<Activity> _activities = new List<Activity>();
     public IEnumerable<string> _selectedThemes = new List<string>();
-    public IEnumerable<string> _availableThemes = new List<string>();
+    public Dictionary<string, IEnumerable<string>> _availableThemes = new Dictionary<string, IEnumerable<string>>();
+    //public Dictionary<string, IEnumerable<string>> _visibleThemes => _availableThemes.Where(x => x.Value.FirstOrDefault(y => _selectedThemes.Contains(y)) == null).SelectMany(x => x.Value);
+
 
     protected override async Task OnInitializedAsync()
     {
+        timer = new Timer(1000);
+        timer.Elapsed += OnBounced;
+        timer.AutoReset = false;
+
         _activities = await ActivityService.GetAllActivitiesAsync();
-        DoStuff();
+        PopulateFilters();
     }
 
     private void ShuffleActivities()
     {
+        timer.Stop();
+        timer.Start();
+        var filtered = _activities;
+        if(_selectedThemes.Any())
+        {
+            filtered = _activities.Where(x => _selectedThemes.Contains(x.Properties.Theme));
+        }
         Random R = new Random();
-        int someRandomNumber = R.Next(0, _activities.Count() - 1);
+        int someRandomNumber = R.Next(0, filtered.Count() - 1);
 
-        _suggestedActivity = _activities.ElementAt(someRandomNumber);
-
+        _suggestedActivity = filtered.ElementAt(someRandomNumber);
+        showList = false;
+        bounce = "bounce";
     }
 
-    private void DoStuff()
+    private void OnBounced(Object source, ElapsedEventArgs e)
     {
-        _availableThemes = _activities.Where(x => x.Properties.Theme != null).Select(x => x.Properties.Theme).Distinct();
+        InvokeAsync(() =>
+        {
+            bounce = "";
+            StateHasChanged();
+        });
+    }
+
+    private void PopulateFilters()
+    {
+        var yolo = _activities.GroupBy(x => x.Properties.ActivityType).Select(group => new
+        {
+            GroupName = group.Key,
+            Filters = group.Where(x => x.Properties.Theme != null).ToList()
+        });
+
+        _availableThemes = _activities.GroupBy(x => x.Properties.ActivityType).ToDictionary(x => x.Key, x => x.Where(x => x.Properties.Theme != null).Select(y => y.Properties.Theme).Distinct());
+        //_availableThemes = _activities.Where(x => x.Properties.Theme != null).Select(x => x.Properties.Theme).Distinct();
     }
 
     private void Remove(string theme)

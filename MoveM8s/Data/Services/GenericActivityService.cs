@@ -17,6 +17,8 @@ public class GenericActivityService
                 PropertyNameCaseInsensitive = true
             });
 
+            result?.Activities.ForEach(x => x.Properties.ActivityType = typeOfActivity);
+
             return result;
         }
         else

@@ -9,6 +9,10 @@
             <p>Plats: @SuggestedActivity.Properties.VisitUrl</p>
         }
         <span>Lämplig för rullstol eller barnvagn <i class="oi @iconClass"></i></span>
+        @if (!string.IsNullOrEmpty(SuggestedActivity.Properties.Theme))
+        {
+            <p>Tema: @SuggestedActivity.Properties.Theme</p>
+        }
     </div>
 }
 

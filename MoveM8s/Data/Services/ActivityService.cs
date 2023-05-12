@@ -17,17 +17,32 @@ public class ActivityService
 
         var parkActivities = await _genericActivityService.GetGenericActivities("park", "https://catalog.boras.se/store/1/resource/77");
         var playgroundActivities = await _genericActivityService.GetGenericActivities("playground", "https://catalog.boras.se/store/1/resource/74");
-        var dogServiceActivities = await _genericActivityService.GetGenericActivities("dog", "https://catalog.boras.se/store/1/resource/80");
+        //var dogServiceActivities = await _genericActivityService.GetGenericActivities("dog", "https://catalog.boras.se/store/1/resource/80");
         var bathHouseServiceActivities = await _genericActivityService.GetGenericActivities("bathhouse", "https://catalog.boras.se/store/1/resource/102");
-        var walkTrackActivities = await _genericActivityService.GetGenericActivities("walktrack", "https://catalog.boras.se/store/1/resource/74");
+        var walkTrackActivities = await _genericActivityService.GetGenericActivities("walktrack", "https://catalog.boras.se/store/1/resource/71");
         var swimmingAreaActivities  = await _genericActivityService.GetGenericActivities("swimmingarea", "https://catalog.boras.se/store/1/resource/57");
 
-        list.AddRange(parkActivities.Activities);
-        list.AddRange(playgroundActivities.Activities);
-        list.AddRange(dogServiceActivities.Activities);
-        list.AddRange(bathHouseServiceActivities.Activities);
-        list.AddRange(walkTrackActivities.Activities);
-        list.AddRange(swimmingAreaActivities.Activities);
+        if ((bool)parkActivities.Activities?.Any())
+        {
+            list.AddRange(parkActivities.Activities);
+        }
+        if ((bool)playgroundActivities.Activities?.Any())
+        {
+            list.AddRange(playgroundActivities.Activities);
+        }
+        //list.AddRange(dogServiceActivities.Activities);
+        if ((bool)bathHouseServiceActivities.Activities?.Any())
+        {
+            list.AddRange(bathHouseServiceActivities.Activities);
+        }
+        if (walkTrackActivities.Activities != null && walkTrackActivities.Activities.Any())
+        {
+            list.AddRange(walkTrackActivities.Activities);
+        }
+        if ((bool)swimmingAreaActivities.Activities?.Any())
+        {
+            list.AddRange(swimmingAreaActivities.Activities);
+        }
 
         return list;
     }

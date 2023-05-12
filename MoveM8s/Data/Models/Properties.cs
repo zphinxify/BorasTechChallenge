@@ -15,5 +15,6 @@
         public bool? Accessibility { get; set; }
         public string? Theme { get; set; }
         public int? LastRenovated { get; set; }
+        public string ActivityType { get; set; }
     }
 }
