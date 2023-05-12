@@ -14,7 +14,8 @@
     @if (_forecasts.Any(x => Convert.ToDouble(x.TemperatureC) > 20) && !string.IsNullOrEmpty(activityName))
     {
         <div class="weather-suggestion">
-            <p>Tips! Idag ska det vara soligt och över 20 grader, får vi föreslå ett besök på <strong>@activityName</strong> ?</p>
+            <h5>@ActivityType(_suggestedActivityWeather.Properties.ActivityType, true)</h5>
+            <p>Tips! Idag ska det vara soligt och över 20 grader, får vi föreslå ett besök på <strong>@activityName</strong>?</p>
         </div>
     }
     <div>Slå tärningen för att få fler eminenta förslag</div>
@@ -44,13 +45,14 @@
         {
             <li @onclick="() => AddType(type)">@ActivityType(type)</li>
         }
+    </ul>
 
-    <select class="theme-dropdown" @onchange="OnThemeSelected">
+    @*<select class="theme-dropdown" @onchange="OnThemeSelected">
         @foreach (var option in _availableThemes)
         {
             <option value="@option">@option</option>
         }
-    </select>
+    </select>*@
 
 
     @if (_suggestedActivity != null && string.IsNullOrEmpty(bounce))
@@ -121,11 +123,19 @@
         {
             filtered = filtered.Concat(_activities.Where(x => _selectedTypes.Contains(x.Properties.ActivityType)));
         }
+        if (needsAccessability || isChildFriendly)
+        {
+            filtered = filtered.Where(x => x.Properties.Accessibility != null && (bool)x.Properties.Accessibility);
+        }
 
         Random R = new Random();
         if (!string.IsNullOrEmpty(type))
         {
             filtered = _activities.Where(x => x.Properties.ActivityType == "swimmingarea" || x.Properties.ActivityType == "park");
+            if (needsAccessability || isChildFriendly)
+            {
+                filtered = filtered.Where(x => x.Properties.Accessibility != null && (bool)x.Properties.Accessibility);
+            }
             int randomNumber = R.Next(0, filtered.Count() - 1);
 
             _suggestedActivityWeather = filtered.ElementAt(randomNumber);
@@ -163,18 +173,18 @@
                                       .Distinct();
     }
 
-    private string ActivityType(string type)
+    private string ActivityType(string type, bool singular = false)
     {
         switch (type)
         {
             case "park":
-                return "Parker";
+                return singular ? "Park" : "Parker";
             case "playground":
-                return "Lekplatser";
+                return singular ? "Lekplats" : "Lekplatser";
             case "bathhouse":
                 return "Badhus";
             case "swimmingarea":
-                return "Badplatser";
+                return singular ? "Badplats" : "Badplatser";
             default:
                 return "";
         }
@@ -222,6 +232,7 @@
     {
         var selectedTheme = e.Value.ToString();
         AddTheme(selectedTheme);
+    }
 
     private void AddType(string type)
     {
