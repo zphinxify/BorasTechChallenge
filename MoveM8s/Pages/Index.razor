@@ -40,9 +40,9 @@
         _activities = await ActivityService.GetAllActivitiesAsync();
     }
 
-    protected override async Task OnParametersSetAsync()
+    protected override void OnParametersSet()
     {
-        if (!shuffled)
+        if (!shuffled && _activities.Any())
         {
             ShuffleActivities(needsAccessability, isChildFriendly);
         }

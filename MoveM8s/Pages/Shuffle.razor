@@ -1,25 +1,38 @@
 ﻿@page "/shuffle"
 @using MoveM8s.Data.Models;
 @using MoveM8s.Data.Services;
+@using System.Timers;
 
 @inject ActivityService ActivityService
 
 <h3>Shuffle</h3>
 
 <div>
-    <div>Tryck på knappen för att få fler eminenta förslag</div>
-    <button class="btn btn-primary btn-green" @onclick="ShuffleActivities">Ge förslag</button>
+    <div>Slå tärningen för att få fler eminenta förslag</div>
+    <img src="/img/dice-1294902_1280.png" @onclick="ShuffleActivities" height="200px" class="@bounce" />
+    @*<button class="btn btn-primary btn-green" @onclick="ShuffleActivities">Ge förslag</button>*@
     <div class="chip-container">
         @foreach (var theme in _selectedThemes)
         {
             <FilterChip Theme="@theme" OnClickCallback="Remove" />
         }
+        @foreach (var type in _selectedTypes)
+        {
+            <FilterChip Theme="@ActivityType(type)" OnClickCallback="Remove" />
+        }
     </div>
 
-    <ul>
-        @foreach (var option in _availableThemes)
+    <button class="btn btn-primary btn-light-green" @onclick=@(() => showList = !showList)>Filtrera</button>
+    <ul class="filter-list list-unstyled @(showList ? "" : "visually-hidden")">
+        <li class="text-danger" @onclick:preventDefault style="background-color: lightblue;">Lekparksteman</li>
+        @foreach (var theme in _availableThemes)
         {
-            <li @onclick="() => AddTheme(option)">@option</li>
+            <li @onclick="() => AddTheme(theme)">@theme</li>
+        }
+        <li class="text-danger" @onclick:preventDefault style="background-color: lightblue;">Aktivitetstyper</li>
+        @foreach(var type in _activities.Where(x => !string.IsNullOrEmpty(x.Properties.ActivityType) && !_selectedTypes.Contains(x.Properties.ActivityType)).Select(x => x.Properties.ActivityType).Distinct())
+        {
+            <li @onclick="() => AddType(type)">@ActivityType(type)</li>
         }
     </ul>
 
@@ -39,7 +52,9 @@
 </div>
 
 @code {
-    private string suggestion = "Click shuffle for suggestion";
+    private static Timer timer;
+    private string bounce = "";
+    private bool showList = false;
     private Activity _suggestedActivity = null;
     private IEnumerable<Activity> _activities = new List<Activity>();
     private bool needsAccessability;
@@ -47,32 +62,86 @@
 
     public IEnumerable<string> _selectedThemes = new List<string>();
     public IEnumerable<string> _availableThemes = new List<string>();
+    public IEnumerable<string> _selectedTypes = new List<string>();
+    //public Dictionary<string, IEnumerable<string>> _visibleThemes => _availableThemes.Where(x => x.Value.FirstOrDefault(y => _selectedThemes.Contains(y)) == null).SelectMany(x => x.Value);
+
 
     protected override async Task OnInitializedAsync()
     {
+        timer = new Timer(1000);
+        timer.Elapsed += OnBounced;
+        timer.AutoReset = false;
+
         _activities = await ActivityService.GetAllActivitiesAsync();
-        DoStuff();
+        PopulateFilters();
     }
 
     private void ShuffleActivities()
     {
-        Random R = new Random();
-        int someRandomNumber = R.Next(0, _activities.Count() - 1);
-
-        _suggestedActivity = _activities.ElementAt(someRandomNumber);
-
-    }
-
-    private void DoStuff()
-    {
-        _availableThemes = _activities.Where(x => x.Properties.Theme != null).Select(x => x.Properties.Theme).Distinct();
-    }
-
-    private void Remove(string theme)
-    {
-        if (_selectedThemes.Contains(theme))
+        timer.Stop();
+        timer.Start();
+        var filtered = _activities;
+        if(_selectedThemes.Any())
         {
-            _selectedThemes = _selectedThemes.Where(x => x != theme);
+            filtered = _activities.Where(x => _selectedThemes.Contains(x.Properties.Theme));
+        }
+        Random R = new Random();
+        int someRandomNumber = R.Next(0, filtered.Count() - 1);
+
+        _suggestedActivity = filtered.ElementAt(someRandomNumber);
+        showList = false;
+        bounce = "bounce";
+    }
+
+    private void OnBounced(Object source, ElapsedEventArgs e)
+    {
+        InvokeAsync(() =>
+        {
+            bounce = "";
+            StateHasChanged();
+        });
+    }
+
+    private void PopulateFilters()
+    {
+        var yolo = _activities.GroupBy(x => x.Properties.ActivityType).Select(group => new
+        {
+            GroupName = group.Key,
+            Filters = group.Where(x => x.Properties.Theme != null).ToList()
+        });
+
+        //_availableThemes = _activities.GroupBy(x => x.Properties.ActivityType).ToDictionary(x => x.Key, x => x.Where(x => x.Properties.Theme != null).Select(y => y.Properties.Theme).Distinct());
+        _availableThemes = _activities.Where(x => x.Properties.Theme != null)
+                                      .Select(x => x.Properties.Theme)
+                                      .Distinct();
+    }
+
+    private string ActivityType(string type)
+    {
+        switch (type)
+        {
+            case "park":
+                return "Parker";
+            case "playground":
+                return "Lekplatser";
+            case "bathhouse":
+                return "Badhus";
+            case "swimmingarea":
+                return "Badplatser";
+            default:
+                return "";
+        }
+    }
+
+    private void Remove(string themeOrType)
+    {
+        if (_selectedThemes.Contains(themeOrType))
+        {
+            _selectedThemes = _selectedThemes.Where(x => x != themeOrType);
+        }
+        if(_selectedTypes.Contains(themeOrType))
+        {
+            _selectedTypes = _selectedTypes.Where(x => x != themeOrType);
         }
     }
 
@@ -81,6 +150,14 @@
         if (!_selectedThemes.Contains(theme))
         {
             _selectedThemes = _selectedThemes.Concat(new string[] { theme });
+        }
+    }
+
+    private void AddType(string type)
+    {
+        if (!_selectedTypes.Contains(type))
+        {
+            _selectedTypes = _selectedTypes.Concat(new string[] { type });
         }
     }
 }
