@@ -13,16 +13,6 @@
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
-        if (firstRender)
-        {
-            await JSRuntime.InvokeVoidAsync("initialize", Lng,Lat);
-            StateHasChanged();
-        }
-    }
-
-    protected async override Task OnParametersSetAsync()
-    {
-        await JSRuntime.InvokeVoidAsync("update", Lng, Lat);
-        await OnParametersSetAsync();
+        await JSRuntime.InvokeVoidAsync("initialize", Lng,Lat);
     }
 }

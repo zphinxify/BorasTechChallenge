@@ -15,41 +15,28 @@
     <link rel="icon" type="image/png" href="favicon.png"/>
     <component type="typeof(HeadOutlet)" render-mode="ServerPrerendered" />
 
-   
+
 
     <script>
         function initialize(lat, lng) {
             var latlng = new google.maps.LatLng(lat, lng);
             var options = {
-                zoom: 14, center: latlng,
+                zoom: 14,
+                center: latlng,
                 mapTypeId: google.maps.MapTypeId.ROADMAP
             };
             var map = new google.maps.Map(document.getElementById("map"), options);
 
-            new google.maps.Marker({
+            var marker = new google.maps.Marker({
                 position: latlng,
-                map: map,
+                map: map
             });
-        }
 
-        function update(lat, lng) {
-            var latlng = new google.maps.LatLng(lat, lng);
-
-  // Retrieve the map object
-  const map = new google.maps.Map(document.getElementById("map"));
-
-  // Center the map at the new coordinates
-            map.setCenter(latlng);
-
-  // Update the marker position
-  const marker = map.getMarker();
-  if (marker) {
-                marker.setPosition(latlng);
-  }
-};
-
+            // Store the marker reference for future updates
+            map.marker = marker;
         }
     </script>
+
     
     <script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAYpHGMt0tSBmWim6WUv_tJnfZuJYE-m3I&v=3"></script>
     
