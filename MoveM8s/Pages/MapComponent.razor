@@ -1,9 +1,8 @@
 ﻿
 @inject IJSRuntime JSRuntime
 
-<h1>Display Google Map</h1>
-<div id="map" style="height:500px;width:100%;">
-</div>
+<div id="map" style="height:500px;width:100%;"></div>
+<br />
 
 @code {
     [Parameter]
@@ -12,7 +11,6 @@
     [Parameter]
     public double? Lng { get; set; }
 
-
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
         if (firstRender)
@@ -20,5 +18,11 @@
             await JSRuntime.InvokeVoidAsync("initialize", Lng,Lat);
             StateHasChanged();
         }
+    }
+
+    protected async override Task OnParametersSetAsync()
+    {
+        await JSRuntime.InvokeVoidAsync("update", Lng, Lat);
+        await OnParametersSetAsync();
     }
 }

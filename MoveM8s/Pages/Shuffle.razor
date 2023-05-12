@@ -16,13 +16,18 @@
         }
     </div>
 
-    <ul>
+    @*<ul>
         @foreach (var option in _availableThemes)
         {
             <li @onclick="() => AddTheme(option)">@option</li>
         }
-    </ul>
-
+    </ul>*@
+    <select class="theme-dropdown" @onchange="OnThemeSelected">
+        @foreach (var option in _availableThemes)
+        {
+            <option value="@option">@option</option>
+        }
+    </select>
     @if (_suggestedActivity != null)
     {
         <ActivityTemplate SuggestedActivity=_suggestedActivity />
@@ -51,15 +56,22 @@
     protected override async Task OnInitializedAsync()
     {
         _activities = await ActivityService.GetAllActivitiesAsync();
-        DoStuff();
+
+        if(_activities.Any())
+        {
+            DoStuff();
+        }
     }
 
     private void ShuffleActivities()
     {
-        Random R = new Random();
-        int someRandomNumber = R.Next(0, _activities.Count() - 1);
+        if (_activities.Any())
+        {
+            Random R = new Random();
+            int someRandomNumber = R.Next(0, _activities.Count() - 1);
 
-        _suggestedActivity = _activities.ElementAt(someRandomNumber);
+            _suggestedActivity = _activities.ElementAt(someRandomNumber);
+        }
 
     }
 
@@ -82,5 +94,11 @@
         {
             _selectedThemes = _selectedThemes.Concat(new string[] { theme });
         }
+    }
+
+    private void OnThemeSelected(ChangeEventArgs e)
+    {
+        var selectedTheme = e.Value.ToString();
+        AddTheme(selectedTheme);
     }
 }

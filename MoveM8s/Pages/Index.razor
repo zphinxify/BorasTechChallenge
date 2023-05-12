@@ -54,5 +54,6 @@
         int someRandomNumber = R.Next(0, _activities.Count() - 1);
       
         suggestedActivity = _activities.ElementAt(someRandomNumber);
+        StateHasChanged();
     }
 }
