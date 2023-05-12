@@ -8,23 +8,3 @@
 @using Microsoft.JSInterop
 @using MoveM8s
 @using MoveM8s.Shared
-
-window.initializeMap = () => {
-    const createMap = (coordinates) => {
-        const coords = JSON.parse(coordinates);
-
-        // Create a map object centered at the specified coordinates
-        const map = new google.maps.Map(document.getElementById("map"), {
-            center: coords,
-            zoom: 12, // Adjust the zoom level as needed
-        });
-
-        // Add a marker at the specified coordinates
-        new google.maps.Marker({
-            position: coords,
-            map: map,
-        });
-    };
-
-    window.createMap = createMap;
-};
