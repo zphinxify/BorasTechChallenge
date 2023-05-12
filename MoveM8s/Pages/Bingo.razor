@@ -1,6 +1,7 @@
 ﻿@page "/bingo"
 @using MoveM8s.Data.Models;
 @using MoveM8s.Data.Services;
+@using System.Timers;
 
 @inject ActivityService ActivityService
 
@@ -35,22 +36,39 @@
     }
 
     .selected {
-        background-color: green;
+        color: white;
+        background-color: teal;
     }
 </style>
 
+<h5 class="@bounce" style="margin-top: 20px">Nivå: 1 Erfarenhetspoäng: @experience</h5>
 @code {
     private IEnumerable<Activity>? _activities = new List<Activity>();
 
     private bool[] boxStates = new bool[9];
+    private int experience;
+    private static Timer timer;
+    private string bounce = "";
 
     private void ToggleBox(int index)
     {
+        if (timer != null)
+        {
+            timer.Stop();
+            timer.Start();
+        }
+
         boxStates[index] = !boxStates[index];
+        experience += 10;
+        bounce = "bounce";
+        StateHasChanged();
     }
 
     protected override async Task OnInitializedAsync()
     {
+        timer = new Timer(1000);
+        timer.Elapsed += OnBounced;
+        timer.AutoReset = false;
         _activities = await ActivityService.GetAllActivitiesAsync();
     }
 
@@ -62,6 +80,14 @@
             }
 
             return "";
-        }
     }
 
+    private void OnBounced(Object source, ElapsedEventArgs e)
+    {
+        InvokeAsync(() =>
+        {
+            bounce = "";
+            StateHasChanged();
+        });
+    }
+}
