@@ -1,4 +1,4 @@
-﻿@page "/"
+@page "/"
 @using MoveM8s.Data.Models;
 @using MoveM8s.Data.Services;
 
@@ -30,7 +30,7 @@
 
 @code {
     private bool shuffled = false;
-    private Activity? _suggestedActivity = null;
+    private Activity? suggestedActivity = null;
     private IEnumerable<Activity> _activities;
     private bool needsAccessability;
     private bool isChildFriendly;
@@ -52,15 +52,7 @@
     { 
         Random R = new Random();
         int someRandomNumber = R.Next(0, _activities.Count() - 1);
-
-        _suggestedActivity = _activities.ElementAt(someRandomNumber);
-        while (isAccessable && _suggestedActivity.Properties.Accessibility != true)
-        {
-            _suggestedActivity = _activities.ElementAt(someRandomNumber);
-        }
-        while (isChildFriendly && _suggestedActivity.Properties.Description.Contains("lekplats"))
-        {
-            _suggestedActivity = _activities.ElementAt(someRandomNumber);
-        }
+      
+        suggestedActivity = _activities.ElementAt(someRandomNumber);
     }
 }
