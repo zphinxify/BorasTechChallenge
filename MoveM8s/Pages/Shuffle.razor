@@ -53,7 +53,7 @@
         </label>
     </div>
 
-    @if (_suggestedActivity != null)
+    @if (_suggestedActivity != null && string.IsNullOrEmpty(bounce))
     {
         <ActivityTemplate SuggestedActivity=_suggestedActivity />
     }
