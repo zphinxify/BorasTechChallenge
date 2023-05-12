@@ -45,13 +45,14 @@
         {
             <li @onclick="() => AddType(type)">@ActivityType(type)</li>
         }
+    </ul>
 
-    <select class="theme-dropdown" @onchange="OnThemeSelected">
+    @*<select class="theme-dropdown" @onchange="OnThemeSelected">
         @foreach (var option in _availableThemes)
         {
             <option value="@option">@option</option>
         }
-    </select>
+    </select>*@
 
 
     @if (_suggestedActivity != null && string.IsNullOrEmpty(bounce))
@@ -231,6 +232,7 @@
     {
         var selectedTheme = e.Value.ToString();
         AddTheme(selectedTheme);
+    }
 
     private void AddType(string type)
     {
