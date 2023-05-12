@@ -1,4 +1,4 @@
-﻿@page "/shuffle"
+@page "/shuffle"
 @using MoveM8s.Data.Dtos;
 @using MoveM8s.Data.Models;
 @using MoveM8s.Data.Services;
@@ -31,6 +31,7 @@
         }
     </div>
 
+
     <button class="btn btn-primary btn-light-green" @onclick=@(() => showList = !showList)>Filtrera</button>
     <ul class="filter-list list-unstyled @(showList ? "" : "visually-hidden")">
         <li class="text-danger" @onclick:preventDefault style="background-color: lightblue;">Lekparksteman</li>
@@ -43,17 +44,17 @@
         {
             <li @onclick="() => AddType(type)">@ActivityType(type)</li>
         }
-    </ul>
-    <div class="checkboxes">
-        <label>
-            <input type="checkbox" @bind="needsAccessability" /> Tillgänglighetsanpassat
-        </label>
-        <label>
-            <input type="checkbox" @bind="isChildFriendly" /> Barnanpassat
-        </label>
-    </div>
+
+    <select class="theme-dropdown" @onchange="OnThemeSelected">
+        @foreach (var option in _availableThemes)
+        {
+            <option value="@option">@option</option>
+        }
+    </select>
+
 
     @if (_suggestedActivity != null && string.IsNullOrEmpty(bounce))
+
     {
         <ActivityTemplate SuggestedActivity=_suggestedActivity />
     }
@@ -96,6 +97,7 @@
         timer.AutoReset = false;
 
         _activities = await ActivityService.GetAllActivitiesAsync();
+
         PopulateFilters();
         _forecasts = await WeatherService.GetForecastAsync("12.9470", "57.7203");
         _forecasts = _forecasts.Where(x => x.Time >= DateTime.Now && x.Time < DateTime.Now.AddHours(5));
@@ -107,6 +109,7 @@
 
     private void ShuffleActivities(string type = "")
     {
+
         timer.Stop();
         timer.Start();
         var filtered = _activities;
@@ -130,7 +133,6 @@
         }
 
         int someRandomNumber = R.Next(0, filtered.Count() - 1);
-
         _suggestedActivity = filtered.ElementAt(someRandomNumber);
 
         showList = false;
@@ -214,6 +216,12 @@
             _selectedThemes = _selectedThemes.Concat(new string[] { theme });
         }
     }
+
+
+    private void OnThemeSelected(ChangeEventArgs e)
+    {
+        var selectedTheme = e.Value.ToString();
+        AddTheme(selectedTheme);
 
     private void AddType(string type)
     {
