@@ -16,13 +16,17 @@ a, .btn-link {
     color: #fff;
     background-color: #1b6ec2;
     border-color: #1861ac;
+    padding: 5px 10px;
+    border-radius: 20px;
+    border: none;
 }
 
 .btn-green {
-    border: none;
     background-color: #386a20;
-    padding: 5px 10px;
-    border-radius: 20px;
+}
+
+.btn-light-green {
+    background-color: #b5c7a2;
 }
 
 .btn-green:hover {
@@ -172,12 +176,38 @@ a, .btn-link {
         color: #d9e7cb;
     }
 
-   /* .theme-dropdown option {
-        background-color: #d9e7cb;
-        color: #3e4a36;
+.filter-list {
+    padding: 5px;
+    border: 1px solid lightgray;
+    margin-top: 5px;
+}
+
+@-webkit-keyframes bounce {
+    0% {
+        transform: scale(1,1) translate(0px, 0px);
     }
 
-        .theme-dropdown option:nth-child(odd) {
-            background-color: #8aa779;
-            color: #d9e7cb;
-        }*/
+    30% {
+        transform: scale(1,0.8) translate(0px, 10px);
+    }
+
+    75% {
+        transform: scale(1,1.1) translate(0px, -25px);
+    }
+
+    100% {
+        transform: scale(1,1) translate(0px, 0px);
+    }
+}
+
+.bounce {
+    -webkit-animation: bounce 0.75s;
+    animation-iteration-count: 1;
+}
+
+.weather-suggestion {
+    background-color: beige;
+    padding: 10px;
+    border-radius: 15px;
+    margin-bottom: 10px;
+}

@@ -12,6 +12,10 @@
             <p>Plats: @SuggestedActivity.Properties.VisitUrl</p>
         }
         <span>Lämplig för rullstol eller barnvagn <i class="oi @iconClass"></i></span>
+        @if (!string.IsNullOrEmpty(SuggestedActivity.Properties.Theme))
+        {
+            <p>Tema: @SuggestedActivity.Properties.Theme</p>
+        }
     </div>
 
     <MapComponent Lat=SuggestedActivity.Geometry.Coordinates[0] Lng=SuggestedActivity.Geometry.Coordinates[1] />
@@ -27,7 +31,7 @@
         {
             if (SuggestedActivity == null || SuggestedActivity.Properties.Accessibility == null)
             {
-                return "";
+                return "oi-question-mark";
             }
 
             return (bool)SuggestedActivity?.Properties.Accessibility || SuggestedActivity.Properties.Name == null
