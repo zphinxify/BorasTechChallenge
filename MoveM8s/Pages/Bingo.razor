@@ -1,0 +1,67 @@
+﻿@page "/bingo"
+@using MoveM8s.Data.Models;
+@using MoveM8s.Data.Services;
+
+@inject ActivityService ActivityService
+
+<h3>Har du tråkigt? Spela lite aktivitetsbingo!</h3>
+@if(_activities.Any())
+{
+<div class="grid-container">
+        <div class="grid-item @((boxStates[0]) ? "selected" : "")" @onclick="() => ToggleBox(0)">Lek inte nudda marken i  @activityName(_activities.Where(x => !string.IsNullOrEmpty(x.Properties.Name)).ToArray()[0])</div>
+        <div class="grid-item @((boxStates[1]) ? "selected" : "")" @onclick="() => ToggleBox(1)">Besök @activityName(_activities.Where(x => !string.IsNullOrEmpty(x.Properties.Name)).ToArray()[43]) och spela brännboll</div>
+        <div class="grid-item @((boxStates[2]) ? "selected" : "")" @onclick="() => ToggleBox(2)">Besök @activityName(_activities.Where(x => !string.IsNullOrEmpty(x.Properties.Name)).ToArray()[23]) och spela fotboll </div>
+        <div class="grid-item @((boxStates[3]) ? "selected" : "")" @onclick="() => ToggleBox(3)">Ta med dig barnen till @activityName(_activities.Where(x => !string.IsNullOrEmpty(x.Properties.Name)).ToArray()[170]) och curla lite</div>
+        <div class="grid-item @((boxStates[4]) ? "selected" : "")" @onclick="() => ToggleBox(4)">Plocka en blombukett på @activityName(_activities.Where(x => !string.IsNullOrEmpty(x.Properties.Name)).ToArray()[25])</div>
+        <div class="grid-item @((boxStates[5]) ? "selected" : "")" @onclick="() => ToggleBox(5)">Besök @activityName(_activities.Where(x => !string.IsNullOrEmpty(x.Properties.Name)).ToArray()[76]) och spana in den snygga arkitekturen</div>
+        <div class="grid-item @((boxStates[6]) ? "selected" : "")" @onclick="() => ToggleBox(6)">Besök @activityName(_activities.Where(x => !string.IsNullOrEmpty(x.Properties.Name)).ToArray()[111]) och spana in fåglar</div>
+        <div class="grid-item @((boxStates[7]) ? "selected" : "")" @onclick="() => ToggleBox(7)">Fika på @activityName(_activities.Where(x => !string.IsNullOrEmpty(x.Properties.Name)).ToArray()[99])</div>
+        <div class="grid-item @((boxStates[8]) ? "selected" : "")" @onclick="() => ToggleBox(8)">Gå på match på @activityName(_activities.Where(x => !string.IsNullOrEmpty(x.Properties.Name)).ToArray()[190])</div>
+</div>
+}
+
+<style>
+    .grid-container {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        grid-gap: 10px;
+    }
+
+    .grid-item {
+        background-color: #eee;
+        padding: 10px;
+        text-align: center;
+        cursor: pointer;
+    }
+
+    .selected {
+        background-color: green;
+    }
+</style>
+
+@code {
+    private IEnumerable<Activity>? _activities = new List<Activity>();
+
+    private bool[] boxStates = new bool[9];
+
+    private void ToggleBox(int index)
+    {
+        boxStates[index] = !boxStates[index];
+    }
+
+    protected override async Task OnInitializedAsync()
+    {
+        _activities = await ActivityService.GetAllActivitiesAsync();
+    }
+
+    private string activityName(Activity activity)
+    {
+        if (activity != null)
+            {
+            return string.IsNullOrEmpty(activity.Properties.Name) ? activity.Properties.Namn : activity.Properties.Name;
+            }
+
+            return "";
+        }
+    }
+
