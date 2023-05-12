@@ -1,8 +1,12 @@
-﻿namespace MoveM8s.Data.Models
+﻿using MoveM8s.Converters;
+using System.Text.Json.Serialization;
+
+namespace MoveM8s.Data.Models
 {
     public class Properties
     {
         public long? Source { get; set; }
+        [JsonConverter(typeof(IdConverter))]
         public string? Id { get; set; }
         public string? Name { get; set; }
         public string? Namn { get; set; }
