@@ -1,15 +1,24 @@
 ﻿@page "/shuffle"
+@using MoveM8s.Data.Dtos;
 @using MoveM8s.Data.Models;
 @using MoveM8s.Data.Services;
 @using System.Timers;
+@using MoveM8s.Data;
 
 @inject ActivityService ActivityService
+@inject WeatherForecastService WeatherService; 
 
 <h3>Shuffle</h3>
 
 <div>
+    @if (_forecasts.Any(x => Convert.ToDouble(x.TemperatureC) > 20) && !string.IsNullOrEmpty(activityName))
+    {
+        <div class="weather-suggestion">
+            <p>Tips! Idag ska det vara soligt och över 20 grader, får vi föreslå ett besök på <strong>@activityName</strong> ?</p>
+        </div>
+    }
     <div>Slå tärningen för att få fler eminenta förslag</div>
-    <img src="/img/dice-1294902_1280.png" @onclick="ShuffleActivities" height="200px" class="@bounce" />
+    <img src="/img/dice-1294902_1280.png" @onclick="() => ShuffleActivities()" height="200px" class="@bounce" />
     @*<button class="btn btn-primary btn-green" @onclick="ShuffleActivities">Ge förslag</button>*@
     <div class="chip-container">
         @foreach (var theme in _selectedThemes)
@@ -25,7 +34,7 @@
     <button class="btn btn-primary btn-light-green" @onclick=@(() => showList = !showList)>Filtrera</button>
     <ul class="filter-list list-unstyled @(showList ? "" : "visually-hidden")">
         <li class="text-danger" @onclick:preventDefault style="background-color: lightblue;">Lekparksteman</li>
-        @foreach (var theme in _availableThemes)
+        @foreach (var theme in _availableThemes.Where(x => !_selectedThemes.Contains(x)))
         {
             <li @onclick="() => AddTheme(theme)">@theme</li>
         }
@@ -35,6 +44,14 @@
             <li @onclick="() => AddType(type)">@ActivityType(type)</li>
         }
     </ul>
+    <div class="checkboxes">
+        <label>
+            <input type="checkbox" @bind="needsAccessability" /> Tillgänglighetsanpassat
+        </label>
+        <label>
+            <input type="checkbox" @bind="isChildFriendly" /> Barnanpassat
+        </label>
+    </div>
 
     @if (_suggestedActivity != null)
     {
@@ -42,20 +59,25 @@
     }
 
 </div>
-<div class="checkboxes">
-    <label>
-        <input type="checkbox" @bind="needsAccessability" /> Tillgänglighetsanpassat
-    </label>
-    <label>
-        <input type="checkbox" @bind="isChildFriendly" /> Barnanpassat
-    </label>
-</div>
 
 @code {
+    private string activityName
+    {
+        get
+        {
+            if (_suggestedActivityWeather != null)
+            {
+                return string.IsNullOrEmpty(_suggestedActivityWeather.Properties.Name) ? _suggestedActivityWeather.Properties.Namn : _suggestedActivityWeather.Properties.Name;
+            }
+
+            return "";
+        }
+    }
     private static Timer timer;
     private string bounce = "";
     private bool showList = false;
     private Activity _suggestedActivity = null;
+    private Activity _suggestedActivityWeather = null;
     private IEnumerable<Activity> _activities = new List<Activity>();
     private bool needsAccessability;
     private bool isChildFriendly;
@@ -63,6 +85,7 @@
     public IEnumerable<string> _selectedThemes = new List<string>();
     public IEnumerable<string> _availableThemes = new List<string>();
     public IEnumerable<string> _selectedTypes = new List<string>();
+    public IEnumerable<WeatherForecastResponseDto> _forecasts = new List<WeatherForecastResponseDto>();
     //public Dictionary<string, IEnumerable<string>> _visibleThemes => _availableThemes.Where(x => x.Value.FirstOrDefault(y => _selectedThemes.Contains(y)) == null).SelectMany(x => x.Value);
 
 
@@ -74,9 +97,15 @@
 
         _activities = await ActivityService.GetAllActivitiesAsync();
         PopulateFilters();
+        _forecasts = await WeatherService.GetForecastAsync("12.9470", "57.7203");
+        _forecasts = _forecasts.Where(x => x.Time >= DateTime.Now && x.Time < DateTime.Now.AddHours(5));
+        if (_forecasts.Any())
+        {
+            ShuffleActivities("swimmingarea");
+        }
     }
 
-    private void ShuffleActivities()
+    private void ShuffleActivities(string type = "")
     {
         timer.Stop();
         timer.Start();
@@ -85,12 +114,28 @@
         {
             filtered = _activities.Where(x => _selectedThemes.Contains(x.Properties.Theme));
         }
+        if (_selectedTypes.Any())
+        {
+            filtered = filtered.Concat(_activities.Where(x => _selectedTypes.Contains(x.Properties.ActivityType)));
+        }
+
         Random R = new Random();
+        if (!string.IsNullOrEmpty(type))
+        {
+            filtered = _activities.Where(x => x.Properties.ActivityType == "swimmingarea" || x.Properties.ActivityType == "park");
+            int randomNumber = R.Next(0, filtered.Count() - 1);
+
+            _suggestedActivityWeather = filtered.ElementAt(randomNumber);
+            return;
+        }
+
         int someRandomNumber = R.Next(0, filtered.Count() - 1);
 
         _suggestedActivity = filtered.ElementAt(someRandomNumber);
+
         showList = false;
         bounce = "bounce";
+        StateHasChanged();
     }
 
     private void OnBounced(Object source, ElapsedEventArgs e)
@@ -133,15 +178,32 @@
         }
     }
 
+    private string ActivityTypeTranslation(string type)
+    {
+        switch (type)
+        {
+            case "Parker":
+                return "park";
+            case "Lekplatser":
+                return "playground";
+            case "Badhus":
+                return "bathhouse";
+            case "Badplatser":
+                return "swimmingarea";
+            default:
+                return "";
+        }
+    }
+
     private void Remove(string themeOrType)
     {
         if (_selectedThemes.Contains(themeOrType))
         {
             _selectedThemes = _selectedThemes.Where(x => x != themeOrType);
         }
-        if(_selectedTypes.Contains(themeOrType))
+        if(_selectedTypes.Contains(ActivityTypeTranslation(themeOrType)))
         {
-            _selectedTypes = _selectedTypes.Where(x => x != themeOrType);
+            _selectedTypes = _selectedTypes.Where(x => x != ActivityTypeTranslation(themeOrType));
         }
     }
 

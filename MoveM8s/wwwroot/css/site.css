@@ -114,3 +114,10 @@ a, .btn-link {
     -webkit-animation: bounce 0.75s;
     animation-iteration-count: 1;
 }
+
+.weather-suggestion {
+    background-color: beige;
+    padding: 10px;
+    border-radius: 15px;
+    margin-bottom: 10px;
+}
