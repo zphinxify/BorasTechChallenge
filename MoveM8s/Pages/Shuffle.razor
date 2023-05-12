@@ -46,6 +46,14 @@
             <li @onclick="() => AddType(type)">@ActivityType(type)</li>
         }
     </ul>
+    <div class="checkboxes">
+        <label>
+            <input type="checkbox" @bind="needsAccessability" /> Tillgänglighetsanpassat
+        </label>
+        <label>
+            <input type="checkbox" @bind="isChildFriendly" /> Barnanpassat
+        </label>
+    </div>
 
     @*<select class="theme-dropdown" @onchange="OnThemeSelected">
         @foreach (var option in _availableThemes)
