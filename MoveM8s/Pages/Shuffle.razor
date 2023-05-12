@@ -16,17 +16,23 @@
         {
             <FilterChip Theme="@theme" OnClickCallback="Remove" />
         }
+        @foreach (var type in _selectedTypes)
+        {
+            <FilterChip Theme="@ActivityType(type)" OnClickCallback="Remove" />
+        }
     </div>
 
     <button class="btn btn-primary btn-light-green" @onclick=@(() => showList = !showList)>Filtrera</button>
     <ul class="filter-list list-unstyled @(showList ? "" : "visually-hidden")">
-        @foreach (var group in _availableThemes)
+        <li class="text-danger" @onclick:preventDefault style="background-color: lightblue;">Lekparksteman</li>
+        @foreach (var theme in _availableThemes)
         {
-            <li class="text-danger" @onclick:preventDefault>@group.Key</li>
-            @foreach (var option in group.Value.Where(x => !_selectedThemes.Contains(x)))
-            {
-                <li @onclick="() => AddTheme(option)">@option</li>
-            }
+            <li @onclick="() => AddTheme(theme)">@theme</li>
+        }
+        <li class="text-danger" @onclick:preventDefault style="background-color: lightblue;">Aktivitetstyper</li>
+        @foreach(var type in _activities.Where(x => !string.IsNullOrEmpty(x.Properties.ActivityType) && !_selectedTypes.Contains(x.Properties.ActivityType)).Select(x => x.Properties.ActivityType).Distinct())
+        {
+            <li @onclick="() => AddType(type)">@ActivityType(type)</li>
         }
     </ul>
 
@@ -43,7 +49,8 @@
     private Activity _suggestedActivity = null;
     private IEnumerable<Activity> _activities = new List<Activity>();
     public IEnumerable<string> _selectedThemes = new List<string>();
-    public Dictionary<string, IEnumerable<string>> _availableThemes = new Dictionary<string, IEnumerable<string>>();
+    public IEnumerable<string> _availableThemes = new List<string>();
+    public IEnumerable<string> _selectedTypes = new List<string>();
     //public Dictionary<string, IEnumerable<string>> _visibleThemes => _availableThemes.Where(x => x.Value.FirstOrDefault(y => _selectedThemes.Contains(y)) == null).SelectMany(x => x.Value);
 
 
@@ -91,15 +98,38 @@
             Filters = group.Where(x => x.Properties.Theme != null).ToList()
         });
 
-        _availableThemes = _activities.GroupBy(x => x.Properties.ActivityType).ToDictionary(x => x.Key, x => x.Where(x => x.Properties.Theme != null).Select(y => y.Properties.Theme).Distinct());
-        //_availableThemes = _activities.Where(x => x.Properties.Theme != null).Select(x => x.Properties.Theme).Distinct();
+        //_availableThemes = _activities.GroupBy(x => x.Properties.ActivityType).ToDictionary(x => x.Key, x => x.Where(x => x.Properties.Theme != null).Select(y => y.Properties.Theme).Distinct());
+        _availableThemes = _activities.Where(x => x.Properties.Theme != null)
+                                      .Select(x => x.Properties.Theme)
+                                      .Distinct();
     }
 
-    private void Remove(string theme)
+    private string ActivityType(string type)
     {
-        if (_selectedThemes.Contains(theme))
+        switch (type)
         {
-            _selectedThemes = _selectedThemes.Where(x => x != theme);
+            case "park":
+                return "Parker";
+            case "playground":
+                return "Lekplatser";
+            case "bathhouse":
+                return "Badhus";
+            case "swimmingarea":
+                return "Badplatser";
+            default:
+                return "";
+        }
+    }
+
+    private void Remove(string themeOrType)
+    {
+        if (_selectedThemes.Contains(themeOrType))
+        {
+            _selectedThemes = _selectedThemes.Where(x => x != themeOrType);
+        }
+        if(_selectedTypes.Contains(themeOrType))
+        {
+            _selectedTypes = _selectedTypes.Where(x => x != themeOrType);
         }
     }
 
@@ -108,6 +138,14 @@
         if (!_selectedThemes.Contains(theme))
         {
             _selectedThemes = _selectedThemes.Concat(new string[] { theme });
+        }
+    }
+
+    private void AddType(string type)
+    {
+        if (!_selectedTypes.Contains(type))
+        {
+            _selectedTypes = _selectedTypes.Concat(new string[] { type });
         }
     }
 }
