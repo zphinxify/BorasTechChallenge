@@ -1,4 +1,7 @@
 ﻿@using MoveM8s.Data.Models;
+
+@inject IJSRuntime JSRuntime
+
 @if (SuggestedActivity != null)
 {
     <div class="activity-container">
@@ -14,6 +17,8 @@
             <p>Tema: @SuggestedActivity.Properties.Theme</p>
         }
     </div>
+
+    <Component Lat=SuggestedActivity.Geometry.Coordinates[0] Lng=SuggestedActivity.Geometry.Coordinates[1] />
 }
 
 @code {

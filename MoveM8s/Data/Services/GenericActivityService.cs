@@ -1,3 +1,5 @@
+using Microsoft.Extensions.Options;
+using MoveM8s.Converters;
 using MoveM8s.Data.Models;
 using System.Text.Json;
 
@@ -14,7 +16,8 @@ public class GenericActivityService
             var content = await response.Content.ReadAsStringAsync();
             var result = JsonSerializer.Deserialize<ActivityCollection>(content, options: new JsonSerializerOptions
             {
-                PropertyNameCaseInsensitive = true
+            Converters = { new IdConverter() },
+            PropertyNameCaseInsensitive = true
             });
 
             result?.Activities.ForEach(x => x.Properties.ActivityType = typeOfActivity);
